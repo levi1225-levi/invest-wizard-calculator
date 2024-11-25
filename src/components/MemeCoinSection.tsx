@@ -96,7 +96,7 @@ export const MemeCoinSection = () => {
                 <p className="text-sm text-muted-foreground">{coin.symbol}</p>
               </div>
               <p className="text-lg font-bold">
-                ${coin.analysis.price.toFixed(6)}
+                ${typeof coin.analysis.price === 'number' ? coin.analysis.price.toFixed(6) : '0.000000'}
               </p>
             </div>
             

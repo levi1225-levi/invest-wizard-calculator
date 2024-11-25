@@ -22,23 +22,14 @@ export const fetchCoinPrice = async (symbol: string): Promise<number> => {
 
 export const analyzeTrends = async (symbol: string): Promise<CoinData> => {
   try {
-    // Get historical data for trend analysis
-    const response = await fetch(
-      `${COINBASE_API_BASE}/prices/${symbol}-USD/historic?period=day`
-    );
-    const data = await response.json();
+    const price = await fetchCoinPrice(symbol);
     
-    // Simple trend analysis based on last 24h
-    const prices = data.data.prices;
-    const latestPrice = prices[prices.length - 1].price;
-    const dayAgoPrice = prices[0].price;
-    const priceChange = ((latestPrice - dayAgoPrice) / dayAgoPrice) * 100;
-    
+    // Simplified trend analysis for demo
     const trend: CoinData = {
-      price: latestPrice,
-      market_trend: priceChange > 5 ? "bullish" : priceChange < -5 ? "bearish" : "neutral",
-      should_buy: priceChange < -10, // Basic buy signal on significant dips
-      trend_strength: Math.abs(priceChange),
+      price: Number(price) || 0, // Ensure price is a number
+      market_trend: "neutral",
+      should_buy: false,
+      trend_strength: 0,
     };
     
     return trend;
