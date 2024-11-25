@@ -1,16 +1,7 @@
 import axios from 'axios';
 
-const CMC_API_KEY = '05e67871-347e-4427-84da-45aa7b857c7e';
+const CMC_API_KEY = 'YOUR_COINMARKETCAP_API_KEY'; // Note: This should be in an env variable
 const CMC_API_BASE = 'https://pro-api.coinmarketcap.com/v1';
-
-// Create an axios instance with default config
-const api = axios.create({
-  baseURL: CMC_API_BASE,
-  headers: {
-    'X-CMC_PRO_API_KEY': CMC_API_KEY,
-    'Accept': 'application/json',
-  }
-});
 
 export interface CoinData {
   price: number;
@@ -24,17 +15,14 @@ export interface CoinData {
   volume_24h?: number;
 }
 
-export interface User {
-  username: string;
-  password: string;
-  isAdmin: boolean;
-}
-
 export const fetchCoinPrice = async (symbol: string): Promise<number> => {
   try {
-    const response = await api.get('/cryptocurrency/quotes/latest', {
+    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
+      headers: {
+        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+      },
       params: {
-        symbol,
+        symbol: symbol,
         convert: 'USD'
       }
     });
@@ -47,7 +35,10 @@ export const fetchCoinPrice = async (symbol: string): Promise<number> => {
 
 export const searchCoins = async (query: string): Promise<CoinData[]> => {
   try {
-    const response = await api.get('/cryptocurrency/listings/latest', {
+    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/listings/latest`, {
+      headers: {
+        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+      },
       params: {
         start: 1,
         limit: 100,
@@ -78,9 +69,12 @@ export const searchCoins = async (query: string): Promise<CoinData[]> => {
 
 export const analyzeTrends = async (symbol: string): Promise<CoinData> => {
   try {
-    const response = await api.get('/cryptocurrency/quotes/latest', {
+    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
+      headers: {
+        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+      },
       params: {
-        symbol,
+        symbol: symbol,
         convert: 'USD'
       }
     });
@@ -107,20 +101,4 @@ export const analyzeTrends = async (symbol: string): Promise<CoinData> => {
       trend_strength: 0
     };
   }
-};
-
-// Account management functions
-export const createAccount = (username: string, password: string, isAdmin: boolean = false): void => {
-  const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
-  accounts.push({ username, password, isAdmin });
-  localStorage.setItem('accounts', JSON.stringify(accounts));
-};
-
-export const getAccounts = (): User[] => {
-  return JSON.parse(localStorage.getItem('accounts') || '[]');
-};
-
-export const deleteAccount = (username: string): void => {
-  const accounts = getAccounts().filter(account => account.username !== username);
-  localStorage.setItem('accounts', JSON.stringify(accounts));
 };
