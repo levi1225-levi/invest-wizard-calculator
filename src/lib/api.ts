@@ -3,6 +3,15 @@ import axios from 'axios';
 const CMC_API_KEY = '05e67871-347e-4427-84da-45aa7b857c7e';
 const CMC_API_BASE = 'https://pro-api.coinmarketcap.com/v1';
 
+// Create an axios instance with default config
+const api = axios.create({
+  baseURL: CMC_API_BASE,
+  headers: {
+    'X-CMC_PRO_API_KEY': CMC_API_KEY,
+    'Accept': 'application/json',
+  }
+});
+
 export interface CoinData {
   price: number;
   market_trend: "bullish" | "bearish" | "neutral";
@@ -23,12 +32,9 @@ export interface User {
 
 export const fetchCoinPrice = async (symbol: string): Promise<number> => {
   try {
-    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
-      headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY
-      },
+    const response = await api.get('/cryptocurrency/quotes/latest', {
       params: {
-        symbol: symbol,
+        symbol,
         convert: 'USD'
       }
     });
@@ -41,10 +47,7 @@ export const fetchCoinPrice = async (symbol: string): Promise<number> => {
 
 export const searchCoins = async (query: string): Promise<CoinData[]> => {
   try {
-    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/listings/latest`, {
-      headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY
-      },
+    const response = await api.get('/cryptocurrency/listings/latest', {
       params: {
         start: 1,
         limit: 100,
@@ -75,12 +78,9 @@ export const searchCoins = async (query: string): Promise<CoinData[]> => {
 
 export const analyzeTrends = async (symbol: string): Promise<CoinData> => {
   try {
-    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
-      headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY
-      },
+    const response = await api.get('/cryptocurrency/quotes/latest', {
       params: {
-        symbol: symbol,
+        symbol,
         convert: 'USD'
       }
     });
