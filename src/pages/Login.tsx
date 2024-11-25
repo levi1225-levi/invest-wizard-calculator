@@ -18,6 +18,7 @@ const Login = () => {
     if (username === "levi1225" && password === "Kaboodle1") {
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("isAdmin", "true");
+      localStorage.setItem("username", username);
       navigate("/");
       toast({
         title: "Welcome back, Admin!",
