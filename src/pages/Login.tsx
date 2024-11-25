@@ -14,14 +14,16 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Admin credentials check
-    if (username === "levi1225" && password === "Kaboodle1") {
+    const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+    const account = accounts.find((acc: any) => acc.username === username && acc.password === password);
+    
+    if (account) {
       localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("isAdmin", "true");
       localStorage.setItem("username", username);
+      localStorage.setItem("isAdmin", account.isAdmin.toString());
       navigate("/");
       toast({
-        title: "Welcome back, Admin!",
+        title: "Welcome back!",
         description: "You have successfully logged in.",
       });
     } else {
