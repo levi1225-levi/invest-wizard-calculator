@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const CMC_API_KEY = 'YOUR_COINMARKETCAP_API_KEY'; // Note: This should be in an env variable
+const CMC_API_KEY = '05e67871-347e-4427-84da-45aa7b857c7e';
 const CMC_API_BASE = 'https://pro-api.coinmarketcap.com/v1';
 
 export interface CoinData {
