@@ -3,9 +3,6 @@ import axios from 'axios';
 const CMC_API_KEY = '05e67871-347e-4427-84da-45aa7b857c7e';
 const CMC_API_BASE = 'https://pro-api.coinmarketcap.com/v1';
 
-// Add CORS proxy to handle API requests
-const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-
 export interface CoinData {
   price: number;
   market_trend: "bullish" | "bearish" | "neutral";
@@ -26,9 +23,9 @@ export interface User {
 
 export const fetchCoinPrice = async (symbol: string): Promise<number> => {
   try {
-    const response = await axios.get(`${CORS_PROXY}${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
+    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
       headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+        'X-CMC_PRO_API_KEY': CMC_API_KEY
       },
       params: {
         symbol: symbol,
@@ -44,9 +41,9 @@ export const fetchCoinPrice = async (symbol: string): Promise<number> => {
 
 export const searchCoins = async (query: string): Promise<CoinData[]> => {
   try {
-    const response = await axios.get(`${CORS_PROXY}${CMC_API_BASE}/cryptocurrency/listings/latest`, {
+    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/listings/latest`, {
       headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+        'X-CMC_PRO_API_KEY': CMC_API_KEY
       },
       params: {
         start: 1,
@@ -78,9 +75,9 @@ export const searchCoins = async (query: string): Promise<CoinData[]> => {
 
 export const analyzeTrends = async (symbol: string): Promise<CoinData> => {
   try {
-    const response = await axios.get(`${CORS_PROXY}${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
+    const response = await axios.get(`${CMC_API_BASE}/cryptocurrency/quotes/latest`, {
       headers: {
-        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+        'X-CMC_PRO_API_KEY': CMC_API_KEY
       },
       params: {
         symbol: symbol,
