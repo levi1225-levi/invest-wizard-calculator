@@ -2,17 +2,22 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
 
 interface User {
   username: string;
   expiryDate: string;
+  isAdmin?: boolean;
+  hasSetPassword?: boolean;
 }
 
 const Admin = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [newUsername, setNewUsername] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +26,6 @@ const Admin = () => {
       navigate("/login");
     }
     
-    // Load users from localStorage
     const savedUsers = localStorage.getItem("users");
     if (savedUsers) {
       setUsers(JSON.parse(savedUsers));
@@ -37,6 +41,8 @@ const Admin = () => {
     const newUser = {
       username: newUsername,
       expiryDate: expiryDate,
+      isAdmin: isAdmin,
+      hasSetPassword: false
     };
 
     const updatedUsers = [...users, newUser];
@@ -45,6 +51,7 @@ const Admin = () => {
     
     setNewUsername("");
     setExpiryDate("");
+    setIsAdmin(false);
     toast.success("User added successfully");
   };
 
@@ -61,45 +68,67 @@ const Admin = () => {
   };
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 animate-fade-up">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Admin Panel</h1>
+        <h1 className="text-4xl font-bold font-display">Admin Panel</h1>
         <Button onClick={handleLogout} variant="outline">
           Logout
         </Button>
       </div>
 
       <div className="grid gap-6">
-        <div className="p-6 bg-card rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Add New User</h2>
-          <div className="space-y-4">
+        <div className="p-8 bg-secondary rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-semibold mb-6 font-display">Add New User</h2>
+          <div className="space-y-6">
             <Input
               placeholder="Username"
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
+              className="bg-white"
             />
             <Input
               type="datetime-local"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
+              className="bg-white"
             />
-            <Button onClick={addUser}>Add User</Button>
+            <div className="flex items-center space-x-2">
+              <Switch
+                checked={isAdmin}
+                onCheckedChange={setIsAdmin}
+                id="admin-mode"
+              />
+              <Label htmlFor="admin-mode">Grant Admin Privileges</Label>
+            </div>
+            <Button onClick={addUser} className="w-full">Add User</Button>
           </div>
         </div>
 
-        <div className="p-6 bg-card rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Manage Users</h2>
+        <div className="p-8 bg-secondary rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-semibold mb-6 font-display">Manage Users</h2>
           <div className="space-y-4">
             {users.map((user) => (
               <div
                 key={user.username}
-                className="flex justify-between items-center p-4 bg-background rounded"
+                className="flex justify-between items-center p-6 bg-white rounded-xl shadow-sm"
               >
                 <div>
-                  <p className="font-medium">{user.username}</p>
+                  <p className="font-medium text-lg">{user.username}</p>
                   <p className="text-sm text-muted-foreground">
                     Expires: {new Date(user.expiryDate).toLocaleString()}
                   </p>
+                  <div className="flex items-center mt-2">
+                    {user.isAdmin && (
+                      <span className="text-xs bg-primary text-white px-2 py-1 rounded-full">
+                        Admin
+                      </span>
+                    )}
+                    {!user.hasSetPassword && (
+                      <span className="text-xs bg-warning text-white px-2 py-1 rounded-full ml-2">
+                        Password Not Set
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Button
                   variant="destructive"
