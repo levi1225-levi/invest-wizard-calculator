@@ -7,12 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { RiskMeter } from "./RiskMeter";
 import { Loader2 } from "lucide-react";
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  isDemo?: boolean;
+}
+
+export const SearchBar = ({ isDemo = false }: SearchBarProps) => {
   const [search, setSearch] = useState("");
   
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ['searchCoins', search],
-    queryFn: () => searchCoins(search),
+    queryFn: () => searchCoins(search, isDemo),
     enabled: search.length > 2,
   });
 

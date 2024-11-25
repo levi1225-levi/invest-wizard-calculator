@@ -1,10 +1,9 @@
 import axios from 'axios';
 
 const CMC_API_KEY = '05e67871-347e-4427-84da-45aa7b857c7e';
-const CMC_API_BASE = 'https://pro-api.coinmarketcap.com/v1';
 
 const api = axios.create({
-  baseURL: CMC_API_BASE,
+  baseURL: 'https://pro-api.coinmarketcap.com/v1',
   headers: {
     'X-CMC_PRO_API_KEY': CMC_API_KEY,
     'Accept': 'application/json',
@@ -24,7 +23,49 @@ export interface CoinData {
   volume_24h?: number;
 }
 
-export const fetchCoinPrice = async (symbol: string): Promise<number> => {
+// Demo data for non-authenticated users
+const DEMO_COINS: CoinData[] = [
+  {
+    name: "MoonCoin",
+    symbol: "MOON",
+    price: 0.00123,
+    market_trend: "bullish",
+    should_buy: true,
+    trend_strength: 75,
+    percent_change_24h: 12.5,
+    market_cap: 1000000,
+    volume_24h: 500000
+  },
+  {
+    name: "StarToken",
+    symbol: "STAR",
+    price: 0.0456,
+    market_trend: "bearish",
+    should_buy: false,
+    trend_strength: 60,
+    percent_change_24h: -8.3,
+    market_cap: 2000000,
+    volume_24h: 750000
+  },
+  {
+    name: "GalaxyCoin",
+    symbol: "GLXY",
+    price: 1.23,
+    market_trend: "neutral",
+    should_buy: true,
+    trend_strength: 45,
+    percent_change_24h: 2.1,
+    market_cap: 5000000,
+    volume_24h: 1200000
+  }
+];
+
+export const fetchCoinPrice = async (symbol: string, isDemo: boolean = false): Promise<number> => {
+  if (isDemo) {
+    const demoCoin = DEMO_COINS.find(coin => coin.symbol === symbol);
+    return demoCoin?.price || 0;
+  }
+
   try {
     const response = await api.get('/cryptocurrency/quotes/latest', {
       params: {
@@ -39,7 +80,14 @@ export const fetchCoinPrice = async (symbol: string): Promise<number> => {
   }
 };
 
-export const searchCoins = async (query: string): Promise<CoinData[]> => {
+export const searchCoins = async (query: string, isDemo: boolean = false): Promise<CoinData[]> => {
+  if (isDemo) {
+    return DEMO_COINS.filter(coin => 
+      coin.name?.toLowerCase().includes(query.toLowerCase()) ||
+      coin.symbol?.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
   try {
     const response = await api.get('/cryptocurrency/listings/latest', {
       params: {
@@ -70,7 +118,17 @@ export const searchCoins = async (query: string): Promise<CoinData[]> => {
   }
 };
 
-export const analyzeTrends = async (symbol: string): Promise<CoinData> => {
+export const analyzeTrends = async (symbol: string, isDemo: boolean = false): Promise<CoinData> => {
+  if (isDemo) {
+    const demoCoin = DEMO_COINS.find(coin => coin.symbol === symbol);
+    return demoCoin || {
+      price: 0,
+      market_trend: "neutral",
+      should_buy: false,
+      trend_strength: 0
+    };
+  }
+
   try {
     const response = await api.get('/cryptocurrency/quotes/latest', {
       params: {

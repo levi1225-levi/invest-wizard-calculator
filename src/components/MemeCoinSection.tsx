@@ -6,6 +6,10 @@ import { analyzeTrends, type CoinData } from "@/lib/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
+interface MemeCoinSectionProps {
+  isDemo?: boolean;
+}
+
 interface MemeCoin {
   name: string;
   symbol: string;
@@ -28,14 +32,14 @@ const MEME_COINS: MemeCoin[] = [
   },
 ];
 
-export const MemeCoinSection = () => {
+export const MemeCoinSection = ({ isDemo = false }: MemeCoinSectionProps) => {
   const { data: marketData, isLoading } = useQuery({
-    queryKey: ["memeCoins"],
+    queryKey: ["memeCoins", isDemo],
     queryFn: async () => {
       const results = await Promise.all(
         MEME_COINS.map(async (coin) => ({
           ...coin,
-          analysis: await analyzeTrends(coin.symbol),
+          analysis: await analyzeTrends(coin.symbol, isDemo),
         }))
       );
       return results;
@@ -125,9 +129,10 @@ export const MemeCoinSection = () => {
       
       <Alert>
         <AlertDescription>
-          Market trends and buy signals are based on 24-hour price action and technical analysis.
-          These are highly volatile assets - always do your own research and never invest more than
-          you can afford to lose.
+          {isDemo ? 
+            "This is demo data for illustration purposes only. Real market data is available after login." :
+            "Market trends and buy signals are based on 24-hour price action and technical analysis. These are highly volatile assets - always do your own research and never invest more than you can afford to lose."
+          }
         </AlertDescription>
       </Alert>
     </div>
