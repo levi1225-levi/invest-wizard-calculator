@@ -1,6 +1,7 @@
 import { CoinAnalysis } from "@/components/CoinAnalysis";
 import { ProfitCalculator } from "@/components/ProfitCalculator";
 import { MemeCoinSection } from "@/components/MemeCoinSection";
+import { SearchBar } from "@/components/SearchBar";
 
 const SAMPLE_COINS = [
   {
@@ -34,6 +35,8 @@ const Index = () => {
             market insights.
           </p>
         </div>
+
+        <SearchBar />
 
         <div className="grid gap-6 md:grid-cols-2">
           {SAMPLE_COINS.map((coin) => (
