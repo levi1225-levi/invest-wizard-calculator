@@ -2,12 +2,14 @@ import { CoinAnalysis } from "@/components/CoinAnalysis";
 import { ProfitCalculator } from "@/components/ProfitCalculator";
 import { MemeCoinSection } from "@/components/MemeCoinSection";
 import { SearchBar } from "@/components/SearchBar";
+import { useQuery } from "@tanstack/react-query";
+import { analyzeTrends } from "@/lib/api";
+import { Loader2 } from "lucide-react";
 
-const SAMPLE_COINS = [
+const MAJOR_COINS = [
   {
     name: "Bitcoin",
     symbol: "BTC",
-    price: 43000,
     risk: 45,
     returnTime: "6-12 months",
     recommendation: "Strong Buy",
@@ -15,7 +17,6 @@ const SAMPLE_COINS = [
   {
     name: "Ethereum",
     symbol: "ETH",
-    price: 2200,
     risk: 50,
     returnTime: "3-6 months",
     recommendation: "Buy",
@@ -23,6 +24,20 @@ const SAMPLE_COINS = [
 ];
 
 const Index = () => {
+  const { data: coinData, isLoading } = useQuery({
+    queryKey: ["majorCoins"],
+    queryFn: async () => {
+      const results = await Promise.all(
+        MAJOR_COINS.map(async (coin) => ({
+          ...coin,
+          analysis: await analyzeTrends(coin.symbol),
+        }))
+      );
+      return results;
+    },
+    refetchInterval: 60000, // Refresh every minute
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container py-12 space-y-12">
@@ -39,9 +54,23 @@ const Index = () => {
         <SearchBar />
 
         <div className="grid gap-6 md:grid-cols-2">
-          {SAMPLE_COINS.map((coin) => (
-            <CoinAnalysis key={coin.symbol} {...coin} />
-          ))}
+          {isLoading ? (
+            <div className="col-span-2 flex items-center justify-center p-12">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            coinData?.map((coin) => (
+              <CoinAnalysis
+                key={coin.symbol}
+                name={coin.name}
+                symbol={coin.symbol}
+                price={coin.analysis.price}
+                risk={coin.risk}
+                returnTime={coin.returnTime}
+                recommendation={coin.recommendation}
+              />
+            ))
+          )}
         </div>
 
         <div className="max-w-xl mx-auto">
