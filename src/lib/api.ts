@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 const CMC_API_KEY = '05e67871-347e-4427-84da-45aa7b857c7e';
+const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 const api = axios.create({
-  baseURL: 'https://pro-api.coinmarketcap.com/v1',
+  baseURL: `${CORS_PROXY}https://pro-api.coinmarketcap.com/v1`,
   headers: {
     'X-CMC_PRO_API_KEY': CMC_API_KEY,
     'Accept': 'application/json',
