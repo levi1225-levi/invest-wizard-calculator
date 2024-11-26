@@ -8,7 +8,8 @@ const api = axios.create({
   headers: {
     'X-CMC_PRO_API_KEY': CMC_API_KEY,
     'Accept': 'application/json',
-    'Accept-Encoding': 'deflate, gzip'
+    'Accept-Encoding': 'deflate, gzip',
+    'Origin': window.location.origin
   }
 });
 
