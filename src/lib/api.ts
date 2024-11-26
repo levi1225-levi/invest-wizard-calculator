@@ -94,15 +94,21 @@ export const searchCoins = async (query: string, isDemo: boolean = false): Promi
     const response = await api.get('/cryptocurrency/listings/latest', {
       params: {
         start: 1,
-        limit: 100,
+        limit: 20,
         convert: 'USD',
         sort: 'market_cap',
         sort_dir: 'desc',
-        search: query
+        cryptocurrency_type: 'all'
       }
     });
 
-    return response.data.data.map((coin: any) => ({
+    const coins = response.data.data;
+    const filteredCoins = coins.filter((coin: any) => 
+      coin.name.toLowerCase().includes(query.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(query.toLowerCase())
+    );
+
+    return filteredCoins.map((coin: any) => ({
       name: coin.name,
       symbol: coin.symbol,
       price: coin.quote.USD.price,
